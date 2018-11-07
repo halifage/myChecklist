@@ -22,7 +22,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     private onItemClickListener listener;
 
     public interface onItemClickListener {
-        void onItemClick(int position);
+//        void onItemClick(int position);
 
         void onItemCheckStateChange(int position, Boolean isChecked);
 
@@ -39,24 +39,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         public EditText editText;
         public ImageButton imageButton;
 
-        public ListViewHolder(@NonNull View itemView, final onItemClickListener listener) {
+        public ListViewHolder(@NonNull final View itemView, final onItemClickListener listener) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkbox_checked);
             editText = itemView.findViewById(R.id.edit_text_checked);
             imageButton = itemView.findViewById(R.id.delete_button);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(listener != null){
-                        int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
-                            listener.onItemClick(position);
-                        }
-                    }
-                }
-            });
-            
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

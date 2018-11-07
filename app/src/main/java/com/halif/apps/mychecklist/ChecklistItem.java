@@ -15,16 +15,12 @@ public class ChecklistItem {
         this.checkBox = checkBox;
     }
 
-    public int getDeleteIcon() {
-        return deleteIcon;
-    }
-
     public String getItemText() {
         return itemText;
     }
 
-    public ChecklistItem( String itemText) {
+    public ChecklistItem(String itemText, Boolean isChecked) {
         this.itemText = itemText;
-        checkBox = false;
+        checkBox = isChecked;
     }
 }

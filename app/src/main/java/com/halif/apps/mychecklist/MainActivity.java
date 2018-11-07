@@ -1,19 +1,13 @@
 package com.halif.apps.mychecklist;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private EditText title;
     private EditText newListItem;
+    private int endOfList;
+    private int startOfList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void buildAndInitialize(){
-        listItems = new ArrayList();
-        listItems.add(new ChecklistItem("one"));
-        listItems.add(new ChecklistItem("two"));
-        listItems.add(new ChecklistItem("three"));
+    private void buildAndInitialize() {
+        listItems = new ArrayList<>();
+        listItems.add(new ChecklistItem("one", false));
+        listItems.add(new ChecklistItem("two", false));
+        listItems.add(new ChecklistItem("three", false));
+        startOfList = 0;
+        endOfList = listItems.size() - 1;
 
         title = findViewById(R.id.title);
         newListItem = findViewById(R.id.list_item);
@@ -55,18 +53,14 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickedListener(new ListAdapter.onItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                listItems.get(position);
-                Toast.makeText(MainActivity.this, "clicked", Toast.LENGTH_SHORT).show();
-            }
 
             @Override
             public void onItemCheckStateChange(int position, Boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     itemChecked(position);
-                }else{
-                    itemUnChecked(position);}
+                } else {
+                    itemUnChecked(position);
+                }
             }
 
             @Override
@@ -74,18 +68,67 @@ public class MainActivity extends AppCompatActivity {
                 removeItem(position);
             }
         });
+
+        newListItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    String itemText = textView.getText().toString().trim();
+
+                    if (itemText.length() > 0) {
+                        listItems.add(startOfList, new ChecklistItem(itemText, false));
+                        textView.setText("");
+                        textView.requestFocus();
+                        adapter.notifyItemInserted(startOfList);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     public void itemUnChecked(int position) {
-        listItems.add(0, new ChecklistItem(removeItem(position)));
-        adapter.notifyItemInserted(0);
+        ChecklistItem currentItem = listItems.get(position);
+
+        if (position == startOfList) {
+            currentItem.setCheckBox(false);
+            adapter.notifyItemChanged(endOfList);
+        } else {
+            ChecklistItem itemAboveCurrent = listItems.get(position - 1);
+
+            if (itemAboveCurrent.getCheckBox()) {
+                listItems.remove(position);
+                adapter.notifyItemRemoved(position);
+                listItems.add(startOfList, new ChecklistItem(currentItem.getItemText(), false));
+                adapter.notifyItemInserted(startOfList);
+            } else {
+                currentItem.setCheckBox(false);
+                adapter.notifyItemChanged(position);
+            }
+        }
+
     }
 
     public void itemChecked(int position) {
-        ChecklistItem item = new ChecklistItem(removeItem(position));
-        item.setCheckBox(true);
-        listItems.add(item);
-        adapter.notifyItemInserted(listItems.size()-1);
+        ChecklistItem currentItem = listItems.get(position);
+
+        if (position == endOfList) {
+            currentItem.setCheckBox(true);
+            adapter.notifyItemChanged(endOfList);
+        } else {       // move to bottom only if the item below it is not checked
+            ChecklistItem itemBelowCurrent = listItems.get(position + 1);
+            if (!itemBelowCurrent.getCheckBox()) {
+                listItems.remove(position);
+                adapter.notifyItemRemoved(position);
+                listItems.add(endOfList, new ChecklistItem(currentItem.getItemText(), true));
+                adapter.notifyItemInserted(endOfList);
+            } else {
+                currentItem.setCheckBox(true);
+                adapter.notifyItemChanged(position);
+            }
+        }
     }
 
     public String removeItem(int position) {
