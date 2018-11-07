@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     public interface onItemClickListener {
         void onItemClick(int position);
 
-        void onDeleteIconClicked(int position);
+        void onItemCheckStateChange(int position, Boolean isChecked);
+
+        void onItemDelete(int position);
     }
 
     public void setOnItemClickedListener(onItemClickListener listener){
@@ -62,7 +63,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                     if(listener != null){
                         int position = getAdapterPosition();
                         if(position != RecyclerView.NO_POSITION){
-                            listener.onDeleteIconClicked(position);
+                            listener.onItemDelete(position);
+                        }
+                    }
+                }
+            });
+
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onItemCheckStateChange(position, checkBox.isChecked());
                         }
                     }
                 }
@@ -82,7 +95,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     public void onBindViewHolder(@NonNull ListViewHolder listViewHolder, int i) {
 
         ChecklistItem checklistItem = checklistItems.get(i);
-
         listViewHolder.editText.setText(checklistItem.getItemText());
         listViewHolder.checkBox.setChecked(checklistItem.getCheckBox());
     }

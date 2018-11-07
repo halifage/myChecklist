@@ -23,9 +23,8 @@ public class ChecklistItem {
         return itemText;
     }
 
-    public ChecklistItem(Boolean checkBox, String itemText) {
-
-        this.checkBox = checkBox;
+    public ChecklistItem( String itemText) {
         this.itemText = itemText;
+        checkBox = false;
     }
 }
