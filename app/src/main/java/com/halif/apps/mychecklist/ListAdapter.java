@@ -29,7 +29,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         void onItemDelete(int position);
     }
 
-    public void setOnItemClickedListener(onItemClickListener listener){
+    public void setOnItemClickedListener(onItemClickListener listener) {
         this.listener = listener;
     }
 
@@ -48,9 +48,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(listener != null){
+                    if (listener != null) {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
+                        if (position != RecyclerView.NO_POSITION) {
                             listener.onItemDelete(position);
                         }
                     }
@@ -60,12 +60,22 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener != null){
+                    if (listener != null) {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
+                        if (position != RecyclerView.NO_POSITION) {
                             listener.onItemCheckStateChange(position, checkBox.isChecked());
                         }
                     }
+                }
+            });
+
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean b) {
+                    if (b)
+                        imageButton.setVisibility(View.VISIBLE);
+                    else
+                        imageButton.setVisibility(View.INVISIBLE);
                 }
             });
         }

@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -87,6 +88,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        title.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    String titleText = textView.getText().toString().trim();
+                    if (titleText.length() > 0) {
+                        setTitle(titleText);
+                        title.setText(titleText);
+//                        newListItem.setVisibility(View.VISIBLE);
+                        newListItem.requestFocus();
+                    } else {
+                        title.setText("");
+                        Toast.makeText(getApplicationContext(), "We really need this Title :-)",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     public void itemUnChecked(int position) {
@@ -95,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         if (position == startOfList) {
             currentItem.setCheckBox(false);
             adapter.notifyItemChanged(endOfList);
+            newListItem.requestFocus();
         } else {
             ChecklistItem itemAboveCurrent = listItems.get(position - 1);
 
@@ -103,9 +126,11 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyItemRemoved(position);
                 listItems.add(startOfList, new ChecklistItem(currentItem.getItemText(), false));
                 adapter.notifyItemInserted(startOfList);
+                newListItem.requestFocus();
             } else {
                 currentItem.setCheckBox(false);
                 adapter.notifyItemChanged(position);
+                newListItem.requestFocus();
             }
         }
 

@@ -14,9 +14,13 @@
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="true"
         android:gravity="center_horizontal"
-        android:hint="title"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
         android:imeOptions="actionDone"
         android:inputType="textCapWords"
+        android:hint="Title"
+        android:textSelectHandle="@android:color/transparent"
+        android:textSize="24dp"
         />
 
     <EditText
@@ -27,9 +31,11 @@
         android:background="@android:color/transparent"
         android:focusableInTouchMode="true"
         android:gravity="center_horizontal"
-        android:hint="new list item"
+        android:layout_marginTop="8dp"
         android:imeOptions="actionDone"
         android:inputType="textCapWords"
+        android:hint="Enter item"
+        android:textSelectHandle="@android:color/transparent"
         />
 
     <android.support.v7.widget.RecyclerView

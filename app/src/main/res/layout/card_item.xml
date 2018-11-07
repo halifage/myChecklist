@@ -12,15 +12,17 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:background="@android:color/transparent"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:showDividers="none">
 
         <CheckBox
             android:id="@+id/checkbox_checked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="4dp"
+            android:layout_margin="8dp"
             android:background="@android:color/transparent"
+            android:gravity="center_vertical"
             />
 
         <EditText
@@ -28,22 +30,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="10dp"
             android:background="@android:color/transparent"
             android:imeOptions="actionDone"
             android:inputType="textCapSentences"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:textSelectHandle="@android:color/transparent"
+            android:textSize="18dp"
              />
 
         <ImageButton
             android:id="@+id/delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_delete"/>
+            android:gravity="center_vertical"
+            android:src="@drawable/delete_icon"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
