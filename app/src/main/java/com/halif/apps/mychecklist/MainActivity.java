@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemDelete(int position) {
-                removeItem(position);
+                listItems.remove(position);
+                adapter.notifyItemRemoved(position);
             }
         });
 
@@ -130,13 +131,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    public String removeItem(int position) {
-        String itemText = listItems.get(position).getItemText();
-        listItems.remove(position);
-        adapter.notifyItemRemoved(position);
-        return itemText;
-    }
-
 }
 
