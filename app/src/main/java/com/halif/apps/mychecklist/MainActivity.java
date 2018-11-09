@@ -1,8 +1,9 @@
 package com.halif.apps.mychecklist;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -10,6 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -31,24 +36,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        newListItem = findViewById(R.id.list_item);
+        title = findViewById(R.id.title);
+
+        retrieveData();
+
         buildAndInitialize();
 
 
     }
 
     private void buildAndInitialize() {
-        listItems = new ArrayList<>();
-        listItems.add(new ChecklistItem("one", false));
-        listItems.add(new ChecklistItem("two", false));
-        listItems.add(new ChecklistItem("three", false));
         startOfList = 0;
-        endOfList = listItems.size() - 1;
-
-        title = findViewById(R.id.title);
-        newListItem = findViewById(R.id.list_item);
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new GridLayoutManager(this, 1);
+        layoutManager = new LinearLayoutManager(this);
         adapter = new ListAdapter(listItems);
 
         recyclerView.setLayoutManager(layoutManager);
@@ -66,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemDelete(int position) {
-                removeItem(position);
+                listItems.remove(position);
+                adapter.notifyItemRemoved(position);
             }
         });
 
@@ -81,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
                         textView.setText("");
                         textView.requestFocus();
                         adapter.notifyItemInserted(startOfList);
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
                 return false;
             }
@@ -139,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
     public void itemChecked(int position) {
         ChecklistItem currentItem = listItems.get(position);
 
+        endOfList = listItems.size() - 1;
+
         if (position == endOfList) {
             currentItem.setCheckBox(true);
             adapter.notifyItemChanged(endOfList);
@@ -156,12 +162,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String removeItem(int position) {
-        String itemText = listItems.get(position).getItemText();
-        listItems.remove(position);
-        adapter.notifyItemRemoved(position);
-        return itemText;
+    public void saveData() {
+        Gson gson = new Gson();
+        SharedPreferences sp = getSharedPreferences("Lists & Notes", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        String listJson = gson.toJson(listItems);
+        editor.putString("Checklist", listJson);
+        editor.putString("title", title.getText().toString());
+        editor.apply();
     }
 
+    public void retrieveData() {
+        SharedPreferences sp = getSharedPreferences("Lists & Notes", MODE_PRIVATE);
+        Gson gson = new Gson();
+        title.setText(sp.getString("title", ""));
+        setTitle(title.getText().toString());
+        newListItem.requestFocus();
+        String listJson = sp.getString("Checklist", null);
+        Type type = new TypeToken<ArrayList<ChecklistItem>>() {
+        }.getType();
+        listItems = gson.fromJson(listJson, type);
+
+        if (listItems == null)
+            listItems = new ArrayList<>();
+    }
+
+    @Override
+    protected void onStop() {
+        saveData();
+        super.onStop();
+    }
 }
 
