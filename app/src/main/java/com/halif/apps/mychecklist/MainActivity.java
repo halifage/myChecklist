@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private EditText title;
     private EditText newListItem;
-    private int endOfList;
     private int startOfList;
 
     @Override
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void itemUnChecked(int position) {
         ChecklistItem currentItem = listItems.get(position);
-
+        int endOfList = listItems.size() - 1;
         if (position == startOfList) {
             currentItem.setCheckBox(false);
             adapter.notifyItemChanged(endOfList);
@@ -141,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void itemChecked(int position) {
-        ChecklistItem currentItem = listItems.get(position);
 
-        endOfList = listItems.size() - 1;
+        ChecklistItem currentItem = listItems.get(position);
+        int endOfList = listItems.size() - 1;
 
         if (position == endOfList) {
             currentItem.setCheckBox(true);

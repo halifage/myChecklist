@@ -1,5 +1,7 @@
 package com.halif.apps.mychecklist;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
-    private ArrayList<ChecklistItem> checklistItems;
+    public ArrayList<ChecklistItem> checklistItems;
 
     public ListAdapter(ArrayList<ChecklistItem> checklistItems) {
         this.checklistItems = checklistItems;
@@ -33,16 +35,43 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         this.listener = listener;
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull ListViewHolder listViewHolder, int i) {
+
+        ChecklistItem checklistItem = checklistItems.get(i);
+        EditText itemText = listViewHolder.editText;
+        CheckBox itemCheckBox = listViewHolder.checkBox;
+        itemText.setText(checklistItem.getItemText());
+        itemCheckBox.setChecked(checklistItem.getCheckBox());
+
+        if (itemCheckBox.isChecked()) {
+            itemText.setPaintFlags(itemText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            itemText.setTextColor(Color.GRAY);
+            itemText.setTextSize(16);
+        } else {
+            itemText.setPaintFlags(0);
+            itemText.setTextColor(Color.BLACK);
+        }
+    }
+
+    @NonNull
+    @Override
+    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_item, viewGroup, false);
+        ListViewHolder myViewHolder = new ListViewHolder(view, listener);
+        return myViewHolder;
+    }
+
     public static class ListViewHolder extends RecyclerView.ViewHolder {
 
         public CheckBox checkBox;
         public EditText editText;
         public ImageButton imageButton;
 
-        public ListViewHolder(@NonNull final View itemView, final onItemClickListener listener) {
+        public ListViewHolder(@NonNull final View itemView, final ListAdapter.onItemClickListener listener) {
             super(itemView);
-            checkBox = itemView.findViewById(R.id.checkbox_checked);
-            editText = itemView.findViewById(R.id.edit_text_checked);
+            checkBox = itemView.findViewById(R.id.checkbox);
+            editText = itemView.findViewById(R.id.edit_text);
             imageButton = itemView.findViewById(R.id.delete_button);
 
             imageButton.setOnClickListener(new View.OnClickListener() {
@@ -79,22 +108,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                 }
             });
         }
-    }
-
-    @NonNull
-    @Override
-    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_item, viewGroup, false);
-        ListViewHolder myViewHolder = new ListViewHolder(view, listener);
-        return myViewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ListViewHolder listViewHolder, int i) {
-
-        ChecklistItem checklistItem = checklistItems.get(i);
-        listViewHolder.editText.setText(checklistItem.getItemText());
-        listViewHolder.checkBox.setChecked(checklistItem.getCheckBox());
     }
 
     @Override
